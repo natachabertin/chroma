@@ -23,9 +23,8 @@ class TestHexColor(unittest.TestCase):
         self.assertEqual(len(str(result)), 7)
 
 
-@unittest.skip('Not implemented yet.')
 class TestCooler(unittest.TestCase):
-    def set_up(self):
+    def setUp(self):
         self.color = HexColor('484848')
 
     @patch('hex_color.HexColor._change_temperature')
@@ -38,29 +37,9 @@ class TestCooler(unittest.TestCase):
         self.color.cooler(-1, False)
         temp_changer.assert_called_with('484848', 1, False)
 
-    @patch('hex_color.HexColor._is_valid_amount')
-    def test_callsAmountChecker(self, amount_checker):
-        self.color.cooler(-1, False)
-        amount_checker.assert_called_with(-1)
 
-    @patch('hex_color.HexColor._change_temperature')
-    def test_validAmount_callsTempChanger(self, temp_changer):
-        self.color.cooler(-1, False)
-        self.assertEqual(temp_changer.call_count, 1)
-
-    @patch('hex_color.HexColor._change_temperature')
-    def test_invalidAmount_doesntCallTempChanger(self, temp_changer):
-        self.color.cooler(10, False)
-        temp_changer.assert_not_called()
-
-    def test_invalidAmount_raisesValueError(self):
-        with self.assertRaises(ValueError):
-            self.color.cooler(10, False)
-
-
-@unittest.skip('Not implemented yet.')
 class TestWarmer(unittest.TestCase):
-    def set_up(self):
+    def setUp(self):
         self.color = HexColor('484848')
 
     @patch('hex_color.HexColor._change_temperature')
@@ -73,29 +52,24 @@ class TestWarmer(unittest.TestCase):
         self.color.warmer(-1, False)
         temp_changer.assert_called_with('484848', -1, False)
 
-    @patch('hex_color.HexColor._is_valid_amount')
-    def test_callsAmountChecker(self, amount_checker):
-        self.color.warmer(-1, False)
-        amount_checker.assert_called_with('484848', 1, False)
 
-    @patch('hex_color.HexColor._change_temperature')
-    def test_validAmount_callsTempChanger(self, temp_changer):
-        self.color.warmer(-1, False)
-        self.assertEqual(temp_changer.call_count, 1)
+class TestDigitToSwitch(unittest.TestCase):
+    def setUp(self):
+        self.color = HexColor('484848')
 
-    @patch('hex_color.HexColor._change_temperature')
-    def test_invalidAmount_doesntCallTempChanger(self, temp_changer):
-        self.color.warmer(10, False)
-        temp_changer.assert_not_called()
+    def test_subtleFalse_returnsZero(self):
+        self.assertEqual(
+            self.color._digit_to_switch(False), 0
+        )
 
-    def test_invalidAmount_raisesValueError(self):
-        with self.assertRaises(ValueError):
-            self.color.warmer(10, False)
+    def test_subtleTrue_returnsOne(self):
+        self.assertEqual(
+            self.color._digit_to_switch(True), 1
+        )
 
 
-@unittest.skip('Not implemented yet.')
 class TestAmountChecker(unittest.TestCase):
-    def set_up(self):
+    def setUp(self):
         self.color = HexColor('484848')
 
     def test_positiveInRange_returnsValid(self):
@@ -109,18 +83,28 @@ class TestAmountChecker(unittest.TestCase):
         )
 
     def test_positiveOutOfRange_returnsInvalid(self):
-        self.assertTrue(
+        self.assertFalse(
             self.color._is_valid_amount(10)
         )
 
     def test_negativeOutOfRange_returnsInvalid(self):
-        self.assertTrue(
+        self.assertFalse(
             self.color._is_valid_amount(-10)
+        )
+
+    def test_rangeLimitHighOutside_returnsValid(self):
+        self.assertFalse(
+            self.color._is_valid_amount(7)
+        )
+
+    def test_rangeLimitLowOutside_returnsValid(self):
+        self.assertFalse(
+            self.color._is_valid_amount(-1)
         )
 
     def test_rangeLimitHighInside_returnsValid(self):
         self.assertTrue(
-            self.color._is_valid_amount(7)
+            self.color._is_valid_amount(6)
         )
 
     def test_rangeLimitLowInside_returnsValid(self):
@@ -129,10 +113,35 @@ class TestAmountChecker(unittest.TestCase):
         )
 
 
-@unittest.skip('Not implemented yet.')
 class TestChangeTemperature(unittest.TestCase):
-    def set_up(self):
+    def setUp(self):
         self.color = HexColor('484848')
+
+    @patch('hex_color.HexColor._is_valid_amount')
+    def test_validAmount_callsAmountChecker(self, amount_checker):
+        self.color._change_temperature(1, False)
+        amount_checker.assert_called_with(1)
+
+    def test_invalidAmount_raisesValueError(self):
+        with self.assertRaises(ValueError):
+            self.color._change_temperature(10, False)
+
+    @patch('hex_color.HexColor._digit_to_switch')
+    def test_validAmount_callsDigitToSwitch(self, getDigit):
+        self.color._change_temperature(1, False)
+        amount_checker.assert_called_with(1)
+
+    @patch('hex_color.HexColor._digit_to_switch')
+    @patch('hex_color.HexColor._add_hex')
+    def test_invalidAmount_doesntCallDigitToSwitchNorAddHex(self, add_hex, getDigit):
+        self.color._change_temperature(10, False)
+        getDigit.assert_not_called()
+        add_hex.assert_not_called()
+
+    @patch('hex_color.HexColor._add_hex')
+    def test_validAmount_callsAddHex(self, add_hex):
+        self.color._change_temperature(-1, False)
+        self.assertEqual(add_hex.call_count, 1)
 
     @patch('hex_color.HexColor._add_hex')
     def test_allInRange_addHexTwice(self, add_hex):
@@ -190,9 +199,8 @@ class TestChangeTemperature(unittest.TestCase):
         self.assertEqual(result, '484848')
 
 
-@unittest.skip('Not implemented yet.')
 class TestAddHex(unittest.TestCase):
-    def set_up(self):
+    def setUp(self):
         self.color = HexColor('484848')
 
     def test_returnsHexValue(self):
