@@ -30,12 +30,12 @@ class TestCooler(unittest.TestCase):
     @patch('hex_color.HexColor._change_temperature')
     def test_positiveAmount_callsChangeTempWithNegativeSign(self, temp_changer):
         self.color.cooler(1, False)
-        temp_changer.assert_called_with('484848', -1, False)
+        temp_changer.assert_called_with(-1, subtle=False)
 
     @patch('hex_color.HexColor._change_temperature')
     def test_negativeAmount_callsChangeTempWithPositiveSign(self, temp_changer):
         self.color.cooler(-1, False)
-        temp_changer.assert_called_with('484848', 1, False)
+        temp_changer.assert_called_with(1, subtle=False)
 
 
 class TestWarmer(unittest.TestCase):
@@ -45,12 +45,12 @@ class TestWarmer(unittest.TestCase):
     @patch('hex_color.HexColor._change_temperature')
     def test_positiveAmount_callsChangeTempWithPositiveSign(self, temp_changer):
         self.color.warmer(1, False)
-        temp_changer.assert_called_with('484848', 1, False)
+        temp_changer.assert_called_with(1, subtle=False)
 
     @patch('hex_color.HexColor._change_temperature')
     def test_negativeAmount_callsChangeTempWithNegativeSign(self, temp_changer):
         self.color.warmer(-1, False)
-        temp_changer.assert_called_with('484848', -1, False)
+        temp_changer.assert_called_with(-1, subtle=False)
 
 
 class TestDigitToSwitch(unittest.TestCase):
