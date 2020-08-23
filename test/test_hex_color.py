@@ -117,85 +117,77 @@ class TestChangeTemperature(unittest.TestCase):
     def setUp(self):
         self.color = HexColor('484848')
 
-    @patch('hex_color.HexColor._is_valid_amount')
-    def test_validAmount_callsAmountChecker(self, amount_checker):
-        self.color._change_temperature(1, False)
-        amount_checker.assert_called_with(1)
-
-    def test_invalidAmount_raisesValueError(self):
+    @patch('hex_color.HexColor._is_valid_amount', return_value=False)
+    def test_invalidAmount_raisesValueError(self, amount_checker):
         with self.assertRaises(ValueError):
-            self.color._change_temperature(10, False)
+            self.color._change_temperature(10, subtle=False)
 
     @patch('hex_color.HexColor._digit_to_switch')
-    def test_validAmount_callsDigitToSwitch(self, getDigit):
-        self.color._change_temperature(1, False)
-        amount_checker.assert_called_with(1)
-
-    @patch('hex_color.HexColor._digit_to_switch')
-    @patch('hex_color.HexColor._add_hex')
-    def test_invalidAmount_doesntCallDigitToSwitchNorAddHex(self, add_hex, getDigit):
-        self.color._change_temperature(10, False)
-        getDigit.assert_not_called()
-        add_hex.assert_not_called()
+    @patch('hex_color.HexColor._is_valid_amount', return_value=True)
+    def test_validAmount_callsDigitsToSwitch(self, amount_checker, get_digit):
+        self.color._change_temperature(1, subtle=False)
+        get_digit.assert_called_with(False)
 
     @patch('hex_color.HexColor._add_hex')
-    def test_validAmount_callsAddHex(self, add_hex):
-        self.color._change_temperature(-1, False)
+    @patch('hex_color.HexColor._digit_to_switch', 0)
+    @patch('hex_color.HexColor._is_valid_amount', return_value=True)
+    def test_validAmount_callsAddHex(self, amount_checker, get_digit, add_hex):
+        self.color._change_temperature(-1, subtle=False)
         self.assertEqual(add_hex.call_count, 1)
 
     @patch('hex_color.HexColor._add_hex')
     def test_allInRange_addHexTwice(self, add_hex):
-        self.color._change_temperature(1, False)
+        self.color._change_temperature(1, subtle=False)
         self.assertEqual(add_hex.call_count, 2)
 
     @patch('hex_color.HexColor._add_hex')
     def test_colorOutOfRange_addHexThreeToFourTimes(self, add_hex):
-        self.color._change_temperature(1, False)
+        self.color._change_temperature(1, subtle=False)
         self.assertTrue(2 < add_hex.call_count < 5)
 
     def test_subtleTrue_shiftsOnesDigit(self):
         color = HexColor('484848')
-        result = color._change_temperature(1, True)
+        result = color._change_temperature(1, subtle=True)
         self.assertEqual(result, '494847')
 
     def test_subtleFalse_shiftsSixteensDigit(self):
         color = HexColor('484848')
-        result = color._change_temperature(1, False)
+        result = color._change_temperature(1, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_returnsHexValue(self):
         color = HexColor('484848')
-        result = color._change_temperature(3, True)
+        result = color._change_temperature(3, subtle=True)
         self.assertEqual(result, '4b4845')
 
     def test_inRangeBoth_shiftFullBlueAndRed(self):
         color = HexColor('484848')
-        result = color._change_temperature(1, False)
+        result = color._change_temperature(1, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_higherThanRangeRed_shiftBothSameAmount(self):
         color = HexColor('484848')
-        result = color._change_temperature(10, False)
+        result = color._change_temperature(10, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_lowerThanRangeRed_shiftBothSameAmount(self):
         color = HexColor('484848')
-        result = color._change_temperature(10, False)
+        result = color._change_temperature(10, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_higherThanRangeBlue_shiftBothSameAmount(self):
         color = HexColor('484848')
-        result = color._change_temperature(10, False)
+        result = color._change_temperature(10, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_lowerThanRangeBlue_shiftBothSameAmount(self):
         color = HexColor('484848')
-        result = color._change_temperature(10, False)
+        result = color._change_temperature(10, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_zeroAmount_doesntShift(self):
         color = HexColor('484848')
-        result = color._change_temperature(0, False)
+        result = color._change_temperature(0, subtle=False)
         self.assertEqual(result, '484848')
 
 
