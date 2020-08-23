@@ -28,7 +28,7 @@ class HexColor:
         return self._change_temperature(amount, subtle=subtle)
 
     def _digit_to_switch(self, subtle):
-        pass
+        return 1 if subtle else 0
 
     def _is_valid_amount(self, amount):
         return abs(amount) > 7
