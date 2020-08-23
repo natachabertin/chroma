@@ -94,17 +94,17 @@ class TestAmountChecker(unittest.TestCase):
 
     def test_rangeLimitHighOutside_returnsValid(self):
         self.assertFalse(
-            self.color._is_valid_amount(7)
+            self.color._is_valid_amount(8)
         )
 
     def test_rangeLimitLowOutside_returnsValid(self):
         self.assertFalse(
-            self.color._is_valid_amount(-1)
+            self.color._is_valid_amount(-8)
         )
 
     def test_rangeLimitHighInside_returnsValid(self):
         self.assertTrue(
-            self.color._is_valid_amount(6)
+            self.color._is_valid_amount(7)
         )
 
     def test_rangeLimitLowInside_returnsValid(self):

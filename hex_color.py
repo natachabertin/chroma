@@ -31,7 +31,7 @@ class HexColor:
         return 1 if subtle else 0
 
     def _is_valid_amount(self, amount):
-        return abs(amount) > 7
+        return abs(amount) < 8
 
     def _add_hex(self, hex_value, amount):
         pass
