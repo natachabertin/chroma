@@ -191,9 +191,18 @@ class TestChangeTemperature(unittest.TestCase):
         self.assertEqual(result, '484848')
 
 
-class TestAddHex(unittest.TestCase):
+class e(unittest.TestCase):
     def setUp(self):
         self.color = HexColor('484848')
+
+    def test_inRangePositive_shiftFullAmount(self):
+        self.assertEqual(self.color._add_hex('8', 3), 'b')
+
+    def test_inRangeNegative_shiftFullAmount(self):
+        self.assertEqual(self.color._add_hex('8', -1), '7')
+
+    def test_zeroAmount_doesntShift(self):
+        self.assertEqual(self.color._add_hex('b', 0), 'b')
 
     def test_returnsHexValue(self):
         self.assertEqual(self.color._add_hex('8', 3), 'b')
@@ -203,7 +212,7 @@ class TestAddHex(unittest.TestCase):
             self.color._add_hex('c', 5)
         self.assertEqual(
             out_of_range_error.exception.msg,
-            'We had to neutralize the color 2 units.'
+            'We had to neutralize the color -2 units.'
         )
         self.assertEqual(out_of_range_error.exception.overflow, -2)
 
@@ -214,13 +223,4 @@ class TestAddHex(unittest.TestCase):
             out_of_range_error.exception.msg,
             'We had to neutralize the color 1 units.'
         )
-        self.assertEqual(out_of_range_error.exception.overflow, -1)
-
-    def test_inRangePositive_shiftFullAmount(self):
-        self.assertEqual(self.color._add_hex('8', 1), 'b')
-
-    def test_inRangeNegative_shiftFullAmount(self):
-        self.assertEqual(self.color._add_hex('8', -1), 'b')
-
-    def test_zeroAmount_doesntShift(self):
-        self.assertEqual(self.color._add_hex('b', 0), 'b')
+        self.assertEqual(out_of_range_error.exception.overflow, 1)

@@ -1,3 +1,5 @@
+from exceptions import DigitOutOfRange
+
 class HexColor:
     """ Given a hex value, generate a color and operate with its channels. """
     def __init__(self, hex_color):
@@ -34,7 +36,14 @@ class HexColor:
         return abs(amount) < 8
 
     def _add_hex(self, hex_value, amount):
-        pass
+        dec_result = int(hex_value, base=16) + amount
+
+        if not 0 <= dec_result < 16:
+            overflow = -dec_result if dec_result < 0 else -(dec_result - 15)
+            msg = f'We had to neutralize the color {overflow} units.'
+            raise DigitOutOfRange(msg, overflow=overflow)
+
+        return str(hex(dec_result))[2:]
 
     def _change_temperature(self, amount, subtle=False):
         """
