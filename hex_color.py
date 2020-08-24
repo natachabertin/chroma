@@ -1,3 +1,6 @@
+from exceptions import DigitOutOfRange
+
+
 class HexColor:
     """ Given a hex value, generate a color and operate with its channels. """
     def __init__(self, hex_color):
@@ -16,23 +19,55 @@ class HexColor:
         return self.hex_name
 
     def __repr__(self):
-        return self.hex_name
+        return f'<HexColor {self.hex_name}>'
 
     def _get_hex_name(self):
         return f'#{self.red}{self.green}{self.blue}'
 
-    # def _change_temp(self, amount, subtle=False, warmer=False):
-    #     """
-    #     Moves red and blue channels in opposed directions, keeping green one equal for consistency.
-    #
-    #     Params:
-    #     -------
-    #     amount : int
-    #         Number of units to shift the digit. Mandatory.
-    #         Limit: if some channel arrives to the end, the other moves until the same amount to preserve harmony.
-    #     subtle : bool
-    #         Shifts the ones digit if true. Otherwise shifts the sixteens. Optional; false default.
-    #     warmer : bool
-    #         Shifts red up and blue down if true. Optional, cooler default.
-    #     """
-    #     return f'#{self.red}{self.green}{self.blue}'
+    def cooler(self, amount, subtle=False):
+        return self._change_temperature(-amount, subtle=subtle)
+
+    def warmer(self, amount, subtle=False):
+        return self._change_temperature(amount, subtle=subtle)
+
+    def _digit_to_switch(self, subtle):
+        return 1 if subtle else 0
+
+    def _is_valid_amount(self, amount):
+        return abs(amount) < 8
+
+    def _add_hex(self, hex_value, amount):
+        dec_result = int(hex_value, base=16) + amount
+
+        if not 0 <= dec_result < 16:
+            overflow = -dec_result if dec_result < 0 else -(dec_result - 15)
+            msg = f'We had to neutralize the color {overflow} units.'
+            raise DigitOutOfRange(msg, overflow=overflow)
+
+        return str(hex(dec_result))[2:]
+
+    def _change_temperature(self, amount, subtle=False):
+        """
+        Moves red and blue channels in opposed directions, keeping green one equal for consistency.
+
+        Params:
+        -------
+        amount : int
+            Number of units to shift the digit. Mandatory.
+            Limit: if some channel arrives to the end, the other moves until the same amount to preserve harmony.
+        subtle : bool
+            Shifts the ones digit if true. Otherwise shifts the sixteens. Optional; false default.
+        """
+        if self._is_valid_amount(amount):
+            digit = self._digit_to_switch(subtle)
+            try:
+                new_r = self._add_hex(self.red[digit], amount)
+                new_b = self._add_hex(self.blue[digit], -amount)
+            except DigitOutOfRange as exception:
+                amount = amount + exception.overflow
+                new_r = self._add_hex(self.red[digit], amount)
+                new_b = self._add_hex(self.blue[digit], -amount)
+
+            return f'{self.red[0]}{new_r}{self.green}{self.blue[0]}{new_b}' if subtle else f'{new_r}{self.red[1]}{self.green}{new_b}{self.blue[1]}'
+        else:
+            raise ValueError('Amount must be less than 8 units.')
