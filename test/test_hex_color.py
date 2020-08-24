@@ -191,7 +191,7 @@ class TestChangeTemperature(unittest.TestCase):
         self.assertEqual(result, '484848')
 
 
-class e(unittest.TestCase):
+class TestAddHex(unittest.TestCase):
     def setUp(self):
         self.color = HexColor('484848')
 
