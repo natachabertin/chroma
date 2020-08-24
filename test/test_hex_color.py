@@ -140,55 +140,25 @@ class TestChangeTemperature(unittest.TestCase):
         self.color._change_temperature(1, subtle=False)
         self.assertEqual(add_hex.call_count, 2)
 
-    @patch('hex_color.HexColor._add_hex')
-    def test_colorOutOfRange_addHexThreeToFourTimes(self, add_hex):
-        self.color._change_temperature(1, subtle=False)
-        self.assertTrue(2 < add_hex.call_count < 5)
+    def test_zeroAmount_doesntShift(self):
+        result = self.color._change_temperature(0, subtle=False)
+        self.assertEqual(result, '484848')
 
     def test_subtleTrue_shiftsOnesDigit(self):
-        color = HexColor('484848')
-        result = color._change_temperature(1, subtle=True)
+        result = self.color._change_temperature(1, subtle=True)
         self.assertEqual(result, '494847')
 
     def test_subtleFalse_shiftsSixteensDigit(self):
-        color = HexColor('484848')
-        result = color._change_temperature(1, subtle=False)
+        result = self.color._change_temperature(1, subtle=False)
         self.assertEqual(result, '584838')
 
     def test_returnsHexValue(self):
-        color = HexColor('484848')
-        result = color._change_temperature(3, subtle=True)
+        result = self.color._change_temperature(3, subtle=True)
         self.assertEqual(result, '4b4845')
 
     def test_inRangeBoth_shiftFullBlueAndRed(self):
-        color = HexColor('484848')
-        result = color._change_temperature(1, subtle=False)
+        result = self.color._change_temperature(1, subtle=False)
         self.assertEqual(result, '584838')
-
-    def test_higherThanRangeRed_shiftBothSameAmount(self):
-        color = HexColor('484848')
-        result = color._change_temperature(10, subtle=False)
-        self.assertEqual(result, '584838')
-
-    def test_lowerThanRangeRed_shiftBothSameAmount(self):
-        color = HexColor('484848')
-        result = color._change_temperature(10, subtle=False)
-        self.assertEqual(result, '584838')
-
-    def test_higherThanRangeBlue_shiftBothSameAmount(self):
-        color = HexColor('484848')
-        result = color._change_temperature(10, subtle=False)
-        self.assertEqual(result, '584838')
-
-    def test_lowerThanRangeBlue_shiftBothSameAmount(self):
-        color = HexColor('484848')
-        result = color._change_temperature(10, subtle=False)
-        self.assertEqual(result, '584838')
-
-    def test_zeroAmount_doesntShift(self):
-        color = HexColor('484848')
-        result = color._change_temperature(0, subtle=False)
-        self.assertEqual(result, '484848')
 
 
 class TestAddHex(unittest.TestCase):
@@ -224,3 +194,29 @@ class TestAddHex(unittest.TestCase):
             'We had to neutralize the color 1 units.'
         )
         self.assertEqual(out_of_range_error.exception.overflow, 1)
+
+
+class TestIntegration(unittest.TestCase):
+    def test_higherThanRangeRed_shiftBothSameAmount(self):
+        result = HexColor('c84848')._change_temperature(5, subtle=False)
+        self.assertEqual(result, 'f84818')
+
+    def test_lowerThanRangeRed_shiftBothSameAmount(self):
+        result = HexColor('484848')._change_temperature(-5, subtle=False)
+        self.assertEqual(result, '084888')
+
+    def test_higherThanRangeBlue_shiftBothSameAmount(self):
+        result = HexColor('3848c8')._change_temperature(-5, subtle=False)
+        self.assertEqual(result, '0848f8')
+
+    def test_lowerThanRangeBlue_shiftBothSameAmount(self):
+        result = HexColor('c84838')._change_temperature(5, subtle=False)
+        self.assertEqual(result, 'f84808')
+
+    def test_inverselyOutOfRangeBoth_shiftBothSameAmount(self):
+        result = HexColor('e81')._change_temperature(5, subtle=False)
+        self.assertEqual(result, 'fe8801')
+
+    def test_outOfRangeBothErrorGoesDeep_endsWithoutEternalLoop(self):
+        result = HexColor('ccc')._change_temperature(-5, subtle=False)
+        self.assertEqual(result, 'fe8801')

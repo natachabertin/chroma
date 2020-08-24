@@ -1,5 +1,6 @@
 from exceptions import DigitOutOfRange
 
+
 class HexColor:
     """ Given a hex value, generate a color and operate with its channels. """
     def __init__(self, hex_color):
@@ -59,7 +60,14 @@ class HexColor:
         """
         if self._is_valid_amount(amount):
             digit = self._digit_to_switch(subtle)
-            new_red_digit = self._add_hex(self.red[digit], amount)
-            new_blue_digit = self._add_hex(self.blue[digit], -amount)
+            try:
+                new_r = self._add_hex(self.red[digit], amount)
+                new_b = self._add_hex(self.blue[digit], -amount)
+            except DigitOutOfRange as exception:
+                amount = amount + exception.overflow
+                new_r = self._add_hex(self.red[digit], amount)
+                new_b = self._add_hex(self.blue[digit], -amount)
+
+            return f'{self.red[0]}{new_r}{self.green}{self.blue[0]}{new_b}' if subtle else f'{new_r}{self.red[1]}{self.green}{new_b}{self.blue[1]}'
         else:
             raise ValueError('Amount must be less than 8 units.')
