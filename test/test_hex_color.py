@@ -74,42 +74,42 @@ class TestAmountChecker(unittest.TestCase):
 
     def test_positiveInRange_returnsValid(self):
         self.assertTrue(
-            self.color._is_valid_amount(3)
+            self.color._amount_in_valid_range(3)
         )
 
     def test_negativeInRange_returnsValid(self):
         self.assertTrue(
-            self.color._is_valid_amount(-3)
+            self.color._amount_in_valid_range(-3)
         )
 
     def test_positiveOutOfRange_returnsInvalid(self):
         self.assertFalse(
-            self.color._is_valid_amount(10)
+            self.color._amount_in_valid_range(10)
         )
 
     def test_negativeOutOfRange_returnsInvalid(self):
         self.assertFalse(
-            self.color._is_valid_amount(-10)
+            self.color._amount_in_valid_range(-10)
         )
 
     def test_rangeLimitHighOutside_returnsValid(self):
         self.assertFalse(
-            self.color._is_valid_amount(8)
+            self.color._amount_in_valid_range(8)
         )
 
     def test_rangeLimitLowOutside_returnsValid(self):
         self.assertFalse(
-            self.color._is_valid_amount(-8)
+            self.color._amount_in_valid_range(-8)
         )
 
     def test_rangeLimitHighInside_returnsValid(self):
         self.assertTrue(
-            self.color._is_valid_amount(7)
+            self.color._amount_in_valid_range(7)
         )
 
     def test_rangeLimitLowInside_returnsValid(self):
         self.assertTrue(
-            self.color._is_valid_amount(0)
+            self.color._amount_in_valid_range(0)
         )
 
 
@@ -117,20 +117,20 @@ class TestChangeTemperature(unittest.TestCase):
     def setUp(self):
         self.color = HexColor('484848')
 
-    @patch('hex_color.HexColor._is_valid_amount', return_value=False)
+    @patch('hex_color.HexColor._amount_in_valid_range', return_value=False)
     def test_invalidAmount_raisesValueError(self, amount_checker):
         with self.assertRaises(ValueError):
             self.color._change_temperature(10, subtle=False)
 
     @patch('hex_color.HexColor._digit_to_switch')
-    @patch('hex_color.HexColor._is_valid_amount', return_value=True)
+    @patch('hex_color.HexColor._amount_in_valid_range', return_value=True)
     def test_validAmount_callsDigitsToSwitch(self, amount_checker, get_digit):
         self.color._change_temperature(1, subtle=False)
         get_digit.assert_called_with(False)
 
     @patch('hex_color.HexColor._add_hex')
     @patch('hex_color.HexColor._digit_to_switch', return_value=0)
-    @patch('hex_color.HexColor._is_valid_amount', return_value=True)
+    @patch('hex_color.HexColor._amount_in_valid_range', return_value=True)
     def test_validAmount_callsAddHex(self, amount_checker, get_digit, add_hex):
         self.color._change_temperature(-1, subtle=False)
         self.assertTrue(add_hex.call_count > 0)
@@ -196,7 +196,7 @@ class TestAddHex(unittest.TestCase):
         self.assertEqual(out_of_range_error.exception.overflow, 1)
 
 
-class TestIntegration(unittest.TestCase):
+class TestTempChangeIntegration(unittest.TestCase):
     def test_higherThanRangeRed_shiftBothSameAmount(self):
         result = HexColor('c84848')._change_temperature(5, subtle=False)
         self.assertEqual(result, 'f84818')
@@ -221,3 +221,125 @@ class TestIntegration(unittest.TestCase):
     def test_outOfRangeBothErrorGoesDeep_endsWithoutEternalLoop(self):
         result = HexColor('ccc')._change_temperature(-5, subtle=False)
         self.assertEqual(result, 'fe8801')
+
+
+class TestBrightener(unittest.TestCase):
+    def setUp(self):
+        self.color = HexColor('888888')
+
+    @patch('hex_color.HexColor._change_shades')
+    def test_positiveAmount_callsChangeShadesWithPositiveSign(self, shade_changer):
+        self.color.brightener(1, False)
+        shade_changer.assert_called_with(1, subtle=False)
+
+    @patch('hex_color.HexColor._change_shades')
+    def test_negativeAmount_callsChangeTempWithNegativeSign(self, shade_changer):
+        self.color.brightener(-1, False)
+        shade_changer.assert_called_with(-1, subtle=False)
+
+
+class TestAllColorsCanBeSwitched(unittest.TestCase):
+    def setUp(self):
+        self.color = HexColor('484848')
+
+    def test_allInRange_returnsTrue(self):
+        self.assertTrue(
+            self.color._all_colors_can_be_switched('3', '6', 'a')
+        )
+
+    def test_lowLimitRed_returnsFalse(self):
+        self.assertFalse(
+            self.color._all_colors_can_be_switched('0', '3', 'd')
+        )
+
+    def test_lowLimitGreen_returnsFalse(self):
+        self.assertFalse(
+            self.color._all_colors_can_be_switched('3', '0', '1')
+        )
+
+    def test_lowLimitBlue_returnsFalse(self):
+        self.assertFalse(
+            self.color._all_colors_can_be_switched('5', '2', '0')
+        )
+
+    def test_highLimitRed_returnsFalse(self):
+        self.assertFalse(
+            self.color._all_colors_can_be_switched('f', 'a', 'a')
+        )
+
+    def test_highLimitGreen_returnsFalse(self):
+        self.assertFalse(
+            self.color._all_colors_can_be_switched('a', 'f', 'a')
+        )
+
+    def test_highLimitBlue_returnsFalse(self):
+        self.assertFalse(
+            self.color._all_colors_can_be_switched('a', '5', 'f')
+        )
+
+
+class TestChangeShades(unittest.TestCase):
+    def setUp(self):
+        self.color = HexColor('888888')
+
+    @patch('hex_color.HexColor._digit_to_switch')
+    @patch('hex_color.HexColor._all_colors_can_be_switched', return_value=True)
+    def test_validAmount_callsDigitsToSwitch(self, amount_checker, get_digit):
+        self.color._change_shades(1, subtle=False)
+        get_digit.assert_called_with(False)
+
+    @patch('hex_color.HexColor._add_hex')
+    @patch('hex_color.HexColor._digit_to_switch', return_value=0)
+    @patch('hex_color.HexColor._all_colors_can_be_switched', return_value=True)
+    def test_validAmount_callsAddHex(self, amount_checker, get_digit, add_hex):
+        self.color._change_shades(-1, subtle=False)
+        self.assertEqual(add_hex.call_count, 3)
+
+    @patch('hex_color.HexColor._add_hex')
+    def test_allInRange_moveAllValuesFullRange(self, add_hex):
+        self.color._change_shades(1, subtle=False)
+        self.assertEqual(add_hex.call_count, 3)
+
+    def test_zeroAmount_doesntShift(self):
+        result = self.color._change_shades(0, subtle=False)
+        self.assertEqual(result, '888888')
+
+    def test_subtleTrue_shiftsOnesDigit(self):
+        result = self.color._change_shades(4, subtle=True)
+        self.assertEqual(result, '8c8c8c')
+
+    def test_subtleFalse_shiftsSixteensDigit(self):
+        result = self.color._change_shades(-5, subtle=False)
+        self.assertEqual(result, '383838')
+
+    def test_returnsHexValue(self):
+        result = self.color._change_shades(3, subtle=True)
+        self.assertEqual(result, '8b8b8b')
+
+    def test_negativeNotAllInRange_cutMovement(self):
+        result = HexColor('3888c8')._change_shades(-9, subtle=False)
+        self.assertEqual(result, '085898')
+
+    def test_positiveNotAllInRange_cutMovement(self):
+        result = HexColor('83888a')._change_shades(4, subtle=True)
+        self.assertEqual(result, '878c8e')
+
+    def test_blueLastNotInRange_cutMovementOnRedGreenToo(self):
+        result = HexColor('55c')._change_shades(5, subtle=True)
+        self.assertEqual(result, '5858cf')
+
+    def test_lowLimitInRange_shiftsBright(self):
+        result = HexColor('11c')._change_shades(-5, subtle=True)
+        self.assertEqual(result, '1010cb')
+
+    def test_lowLimitOutRange_cutMovement(self):
+        result = HexColor('15c')._change_shades(-2, subtle=True)
+        self.assertEqual(result, '1054cb')
+
+    def test_highLimitInRange_shiftsBright(self):
+        result = HexColor('dcc')._change_shades(2, subtle=True)
+        self.assertEqual(result, 'dfcece')
+
+    def test_highLimitOutRange_doesntShiftBright(self):
+        result = HexColor('ecc')._change_shades(5, subtle=True)
+        self.assertEqual(result, 'efcdcd')
