@@ -30,11 +30,11 @@ class HexColor:
     def warmer(self, amount, subtle=False):
         return self._change_temperature(amount, subtle=subtle)
 
+    def brightener(self, amount, subtle=False):
+        return self._change_shades(amount, subtle=subtle)
+
     def _digit_to_switch(self, subtle):
         return 1 if subtle else 0
-
-    def _is_valid_amount(self, amount):
-        return abs(amount) < 8
 
     def _add_hex(self, hex_value, amount):
         dec_result = int(hex_value, base=16) + amount
@@ -45,6 +45,15 @@ class HexColor:
             raise DigitOutOfRange(msg, overflow=overflow)
 
         return str(hex(dec_result))[2:]
+
+    def _amount_in_valid_range(self, amount):
+        return abs(amount) < 8
+
+    def _all_colors_can_be_switched(self, red, green, blue):
+        return all(
+                0 < int(val, base=16) < 15
+                for val in [red, green, blue]
+        )
 
     def _change_temperature(self, amount, subtle=False):
         """
@@ -57,8 +66,13 @@ class HexColor:
             Limit: if some channel arrives to the end, the other moves until the same amount to preserve harmony.
         subtle : bool
             Shifts the ones digit if true. Otherwise shifts the sixteens. Optional; false default.
+
+        Raise:
+        ------
+        ValueError
+            If value is out of 0-16 range.
         """
-        if self._is_valid_amount(amount):
+        if self._amount_in_valid_range(amount):
             digit = self._digit_to_switch(subtle)
             try:
                 new_r = self._add_hex(self.red[digit], amount)
@@ -71,3 +85,29 @@ class HexColor:
             return f'{self.red[0]}{new_r}{self.green}{self.blue[0]}{new_b}' if subtle else f'{new_r}{self.red[1]}{self.green}{new_b}{self.blue[1]}'
         else:
             raise ValueError('Amount must be less than 8 units.')
+
+    def _change_shades(self, amount, subtle=False):
+        """
+        Moves all the channels in the same directions.
+        This lower or raise the brightness, while lowering saturation.
+        This way, color doesn't loss its essence.
+
+        Params:
+        -------
+        amount : int
+            Number of units to shift the digit. Mandatory.
+            Limit: if some channel arrives to the end, the left ones moves until the same amount to preserve harmony.
+        subtle : bool
+            Shifts the ones digit if true. Otherwise shifts the sixteens. Optional; false default.
+        """
+        digit = self._digit_to_switch(subtle)
+        step = 1 if amount > 0 else -1
+        red, green, blue = self.red[digit], self.green[digit], self.blue[digit]
+
+        while abs(amount) > 0 and self._all_colors_can_be_switched(red, green, blue):
+            red = self._add_hex(red, step)
+            green = self._add_hex(green, step)
+            blue = self._add_hex(blue, step)
+            amount -= step
+
+        return f'{self.red[0]}{red}{self.green[0]}{green}{self.blue[0]}{blue}' if subtle else f'{red}{self.red[1]}{green}{self.green[1]}{blue}{self.blue[1]}'
