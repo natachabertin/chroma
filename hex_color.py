@@ -7,7 +7,8 @@ class HexColor:
         self.red, self.green, self.blue = self._get_channels(hex_color)
         self.hex_name = self._get_hex_name()
 
-    def _get_channels(self, hex_color):
+    @staticmethod
+    def _get_channels(hex_color):
         precision = len(hex_color) // 3
         channels = [
             hex_color[precision * i:precision * (i + 1)]
@@ -15,14 +16,17 @@ class HexColor:
         ]
         return channels if precision == 2 else [channel * 2 for channel in channels]
 
+    def _get_hex_name(self):
+        return f'#{self.red}{self.green}{self.blue}'
+
     def __str__(self):
         return self.hex_name
 
     def __repr__(self):
         return f'<HexColor {self.hex_name}>'
 
-    def _get_hex_name(self):
-        return f'#{self.red}{self.green}{self.blue}'
+    def __eq__(self, other):
+        return self.hex_name == other.hex_name
 
     def cooler(self, amount, subtle=False):
         return self._change_temperature(-amount, subtle=subtle)
@@ -33,10 +37,12 @@ class HexColor:
     def brightener(self, amount, subtle=False):
         return self._change_shades(amount, subtle=subtle)
 
-    def _digit_to_switch(self, subtle):
+    @staticmethod
+    def _digit_to_switch(subtle):
         return 1 if subtle else 0
 
-    def _add_hex(self, hex_value, amount):
+    @staticmethod
+    def _add_hex(hex_value, amount):
         dec_result = int(hex_value, base=16) + amount
 
         if not 0 <= dec_result < 16:
@@ -46,10 +52,12 @@ class HexColor:
 
         return str(hex(dec_result))[2:]
 
-    def _amount_in_valid_range(self, amount):
+    @staticmethod
+    def _amount_in_valid_range(amount):
         return abs(amount) < 8
 
-    def _all_colors_can_be_switched(self, red, green, blue):
+    @staticmethod
+    def _all_colors_can_be_switched(red, green, blue):
         return all(
                 0 < int(val, base=16) < 15
                 for val in [red, green, blue]
