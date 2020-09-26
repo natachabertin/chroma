@@ -343,3 +343,36 @@ class TestChangeShades(unittest.TestCase):
     def test_highLimitOutRange_doesntShiftBright(self):
         result = HexColor('ecc')._change_shades(5, subtle=True)
         self.assertEqual(result, 'efcdcd')
+
+@unittest.skip('Not implemented yet.')
+class TestSaturators(unittest.TestCase):
+    def test_additive_saturator_in_range(self):
+        color = HexColor('5a483b')
+        expected = HexColor('aa483b')
+        color.additive_saturator()
+        self.assertEqual(color, expected)
+
+    def test_additive_saturator_out_of_range(self):
+        color = HexColor('ca483b')
+        expected = HexColor('fa483b')
+        color.additive_saturator()
+        self.assertEqual(color, expected)
+
+    def test_subtractive_saturator_even_in_range(self):
+        color = HexColor('5a482b')
+        expected = HexColor('5a281b')
+        color.subtractive_saturator()
+        self.assertEqual(color, expected)
+
+    def test_subtractive_saturator_out_of_range(self):
+        color = HexColor('5a180b')
+        expected = HexColor('5a080b')
+        color.subtractive_saturator()
+        self.assertEqual(color, expected)
+
+    def test_subtractive_saturator_odd(self):
+        color = HexColor('5a482b')
+        expected = HexColor('5a281b')
+        color.subtractive_saturator()
+        self.assertEqual(color, expected)
+

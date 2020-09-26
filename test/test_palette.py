@@ -1,5 +1,4 @@
 import unittest
-# from unittest.mock import patch
 
 from hex_color import HexColor
 from palette import Palette, PaletteFromColor, DuetFromColor
@@ -49,39 +48,6 @@ class TestPaletteFromColor(unittest.TestCase):
         expected = [HexColor(color) for color in colors]
         self.palette.retrieve_matching_hues()
         self.assertEqual(self.palette.colors, expected)
-
-
-class TestDuetFromColor(unittest.TestCase):
-
-    def test_double_highest_in_range(self):
-        palette = DuetFromColor('5a483b')
-        expected = [HexColor(color) for color in ['5a483b', 'aa483b']]
-        palette.double_highest()
-        self.assertEqual(palette.colors, expected)
-
-    def test_double_highest_out_of_range(self):
-        palette = DuetFromColor('ca483b')
-        expected = [HexColor(color) for color in ['ca483b', 'fa483b']]
-        palette.double_highest()
-        self.assertEqual(palette.colors, expected)
-
-    def test_half_lowers_even_in_range(self):
-        palette = DuetFromColor('5a482b')
-        expected = [HexColor(color) for color in ['5a482b', '5a281b']]
-        palette.half_lowers()
-        self.assertEqual(palette.colors, expected)
-
-    def test_half_lowers_out_of_range(self):
-        palette = DuetFromColor('5a180b')
-        expected = [HexColor(color) for color in ['5a180b', '5a080b']]
-        palette.half_lowers()
-        self.assertEqual(palette.colors, expected)
-
-    def test_half_lowers_odd(self):
-        palette = DuetFromColor('5a482b')
-        expected = [HexColor(color) for color in ['5a483b', '5a281b']]
-        palette.half_lowers()
-        self.assertEqual(palette.colors, expected)
 
 @unittest.skip("Not developed yet.")
 class TestDuetFromColorChooseHue(unittest.TestCase):
