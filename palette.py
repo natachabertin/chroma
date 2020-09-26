@@ -48,6 +48,7 @@ class PaletteFromColor(Palette):
         self._onboard_colors(new_colors)
 
     def _get_main_color_channels(self):
+        #TODO: move this to parent class and add the param main_color defaulting to 0, so you deal with self.colors[main] and can change it in multiple colors palettes
         return self.colors[0].red, self.colors[0].green, self.colors[0].blue
 
 
@@ -60,7 +61,7 @@ class DuetFromColor(Palette):
         return self.colors[0].red, self.colors[0].green, self.colors[0].blue
 
     def double_highest(self):
-        # accentuate doubling the highest
+        """Doubling the highest channel."""
         channels = self._get_main_color_channels()
         new_colors = list()
         for permutation in permutations(channels):
@@ -70,15 +71,15 @@ class DuetFromColor(Palette):
         self._onboard_colors(new_colors)
 
     def half_lowers(self):
-        # accentuate dividing the lower two by half.
+        """Dividing the lower two channels by half."""
         channels = self._get_main_color_channels()
         new_colors = list()
         for permutation in permutations(channels):
             color = ''.join(permutation)
             new_colors.append(color)
 
-    def choose_hue(self, tint):
-        # accentuate dividing the lower two by half.
+    def choose_hue(self, hue):
+        """Given the hues matching the color, return the one tending to the choosen tint."""
         channels = self._get_main_color_channels()
         new_colors = list()
         for permutation in permutations(channels):

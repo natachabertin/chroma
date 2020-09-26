@@ -37,6 +37,16 @@ class HexColor:
     def brightener(self, amount, subtle=False):
         return self._change_shades(amount, subtle=subtle)
 
+    def additive_saturator(self, amount):
+        """Upper the highest channel to get a lighter more saturated color.
+        If amount negative, dulls the color."""
+        return self._upper_highest(amount)
+
+    def subtractive_saturator(self, amount):
+        """Down the lower two channels to get a darker more saturated color.
+        If amount negative, dulls the color."""
+        return self._lower_lowests(amount)
+
     @staticmethod
     def _digit_to_switch(subtle):
         return 1 if subtle else 0
@@ -62,6 +72,12 @@ class HexColor:
                 0 < int(val, base=16) < 15
                 for val in [red, green, blue]
         )
+
+    def _upper_highest(self, amount):
+        pass
+
+    def _lower_lowests(self, amount):
+        pass
 
     def _change_temperature(self, amount, subtle=False):
         """
