@@ -2,7 +2,7 @@ import unittest
 # from unittest.mock import patch
 
 from hex_color import HexColor
-from palette import Palette, PaletteFromColor
+from palette import Palette, PaletteFromColor, DuetFromColor
 
 
 class TestPalette(unittest.TestCase):
@@ -44,11 +44,17 @@ class TestPaletteFromColor(unittest.TestCase):
         self.color = HexColor('28c')
         self.palette = PaletteFromColor(self.color)
 
-    def test_change_hue(self):
+    def test_retrieve_matching_hues(self):
         colors = ['2288cc', '22cc88', '8822cc', '88cc22', 'cc2288', 'cc8822']
         expected = [HexColor(color) for color in colors]
-        self.palette.change_hue()
+        self.palette.retrieve_matching_hues()
         self.assertEqual(self.palette.colors, expected)
+
+
+class TestDuetFromColor(unittest.TestCase):
+    def setUp(self):
+        self.color = HexColor('28c')
+        self.palette = DuetFromColor(self.color)
 
     def test_double_highest_in_range(self):
         colors = ['2288cc', '2288ff']
@@ -72,4 +78,46 @@ class TestPaletteFromColor(unittest.TestCase):
         colors = ['2288cc', '2288ff']
         expected = [HexColor(color) for color in colors]
         self.palette.half_lowers()
+        self.assertEqual(self.palette.colors, expected)
+
+    @unittest.skip("Not developed yet.")
+    def test_choose_hue_reddest(self):
+        colors = ['2288cc', '228811']
+        expected = [HexColor(color) for color in colors]
+        self.palette.choose_hue('red')
+        self.assertEqual(self.palette.colors, expected)
+
+    @unittest.skip("Not developed yet.")
+    def test_choose_hue_greenest(self):
+        colors = ['2288cc', '228811']
+        expected = [HexColor(color) for color in colors]
+        self.palette.choose_hue('green')
+        self.assertEqual(self.palette.colors, expected)
+
+    @unittest.skip("Not developed yet.")
+    def test_choose_hue_bluest(self):
+        colors = ['2288cc', '228811']
+        expected = [HexColor(color) for color in colors]
+        self.palette.choose_hue('blue')
+        self.assertEqual(self.palette.colors, expected)
+
+    @unittest.skip("Not developed yet.")
+    def test_choose_hue_yellowest(self):
+        colors = ['2288cc', '228811']
+        expected = [HexColor(color) for color in colors]
+        self.palette.choose_hue('yellow')
+        self.assertEqual(self.palette.colors, expected)
+
+    @unittest.skip("Not developed yet.")
+    def test_choose_hue_purplest(self):
+        colors = ['2288cc', '228811']
+        expected = [HexColor(color) for color in colors]
+        self.palette.choose_hue('purple')
+        self.assertEqual(self.palette.colors, expected)
+
+    @unittest.skip("Not developed yet.")
+    def test_choose_hue_orangest(self):
+        colors = ['2288cc', '228811']
+        expected = [HexColor(color) for color in colors]
+        self.palette.choose_hue('orange')
         self.assertEqual(self.palette.colors, expected)
