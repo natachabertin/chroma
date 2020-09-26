@@ -37,7 +37,7 @@ class PaletteFromColor(Palette):
     def __init__(self, color):
         super().__init__(color)
 
-    def change_hue(self):
+    def retrieve_matching_hues(self):
         """Generate a palette permutating triplets."""
         channels = self._get_main_color_channels()
         new_colors = list()
@@ -46,6 +46,15 @@ class PaletteFromColor(Palette):
             new_colors.append(color)
 
         self._onboard_colors(new_colors)
+
+    def _get_main_color_channels(self):
+        return self.colors[0].red, self.colors[0].green, self.colors[0].blue
+
+
+class DuetFromColor(Palette):
+    """Given a color, get a matching one and retrieve the duet palette."""
+    def __init__(self, color):
+        super().__init__(color)
 
     def _get_main_color_channels(self):
         return self.colors[0].red, self.colors[0].green, self.colors[0].blue
@@ -61,6 +70,14 @@ class PaletteFromColor(Palette):
         self._onboard_colors(new_colors)
 
     def half_lowers(self):
+        # accentuate dividing the lower two by half.
+        channels = self._get_main_color_channels()
+        new_colors = list()
+        for permutation in permutations(channels):
+            color = ''.join(permutation)
+            new_colors.append(color)
+
+    def choose_hue(self, tint):
         # accentuate dividing the lower two by half.
         channels = self._get_main_color_channels()
         new_colors = list()
