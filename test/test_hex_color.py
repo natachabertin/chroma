@@ -344,35 +344,53 @@ class TestChangeShades(unittest.TestCase):
         result = HexColor('ecc')._change_shades(5, subtle=True)
         self.assertEqual(result, 'efcdcd')
 
-@unittest.skip('Not implemented yet.')
+
 class TestSaturators(unittest.TestCase):
     def test_additive_saturator_in_range(self):
+        color = HexColor('5a483b')
+        expected = HexColor('aa483b')
+        color.additive_saturator(5)
+        self.assertEqual(color, expected)
+
+    def test_additive_saturator_out_of_range(self):
+        color = HexColor('5a483b')
+        expected = HexColor('fa483b')
+        color.additive_saturator(12)
+        self.assertEqual(color, expected)
+
+    def test_doubling_saturator_in_range(self):
         color = HexColor('5a483b')
         expected = HexColor('aa483b')
         color.additive_saturator()
         self.assertEqual(color, expected)
 
-    def test_additive_saturator_out_of_range(self):
-        color = HexColor('ca483b')
+    def test_doubling_saturator_out_of_range(self):
+        color = HexColor('aa483b')
         expected = HexColor('fa483b')
         color.additive_saturator()
         self.assertEqual(color, expected)
 
-    def test_subtractive_saturator_even_in_range(self):
+    def test_subtractive_saturator_in_range(self):
         color = HexColor('5a482b')
-        expected = HexColor('5a281b')
-        color.subtractive_saturator()
+        expected = HexColor('5a280b')
+        color.subtractive_saturator(2)
         self.assertEqual(color, expected)
 
     def test_subtractive_saturator_out_of_range(self):
-        color = HexColor('5a180b')
+        color = HexColor('5a482b')
         expected = HexColor('5a080b')
+        color.subtractive_saturator(10)
+        self.assertEqual(color, expected)
+
+    def test_halfing_saturator_in_range(self):
+        color = HexColor('5a482b')
+        expected = HexColor('5a281b')
         color.subtractive_saturator()
         self.assertEqual(color, expected)
 
-    def test_subtractive_saturator_odd(self):
-        color = HexColor('5a482b')
-        expected = HexColor('5a281b')
+    def test_halfing_saturator_out_of_range(self):
+        color = HexColor('fac80b')
+        expected = HexColor('fa680b')
         color.subtractive_saturator()
         self.assertEqual(color, expected)
 
