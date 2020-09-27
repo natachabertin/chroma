@@ -3,11 +3,13 @@ from exceptions import DigitOutOfRange
 
 class HexColor:
     """ Given a hex value, generate a color and operate with its channels. """
+    # TODO: refactor to operate over 2 digits at once with step=16 if not subtle else step=1.
     def __init__(self, hex_color):
         self.red, self.green, self.blue = self._get_channels(hex_color)
         self.hex_name = self._get_hex_name()
 
-    def _get_channels(self, hex_color):
+    @staticmethod
+    def _get_channels(hex_color):
         precision = len(hex_color) // 3
         channels = [
             hex_color[precision * i:precision * (i + 1)]
@@ -15,14 +17,17 @@ class HexColor:
         ]
         return channels if precision == 2 else [channel * 2 for channel in channels]
 
+    def _get_hex_name(self):
+        return f'#{self.red}{self.green}{self.blue}'
+
     def __str__(self):
         return self.hex_name
 
     def __repr__(self):
         return f'<HexColor {self.hex_name}>'
 
-    def _get_hex_name(self):
-        return f'#{self.red}{self.green}{self.blue}'
+    def __eq__(self, other):
+        return self.hex_name == other.hex_name
 
     def cooler(self, amount, subtle=False):
         return self._change_temperature(-amount, subtle=subtle)
@@ -33,10 +38,22 @@ class HexColor:
     def brightener(self, amount, subtle=False):
         return self._change_shades(amount, subtle=subtle)
 
-    def _digit_to_switch(self, subtle):
+    def additive_saturator(self, amount=None):
+        """Upper the highest channel to get a lighter more saturated color.
+        If amount negative, dulls the color."""
+        return self._upper_highest(amount) if amount else self._double_highest()
+
+    def subtractive_saturator(self, amount=None):
+        """Down the lower two channels to get a darker more saturated color.
+        If amount negative, dulls the color."""
+        return self._lower_lowests(amount) if amount else self._half_lowests()
+
+    @staticmethod
+    def _digit_to_switch(subtle):
         return 1 if subtle else 0
 
-    def _add_hex(self, hex_value, amount):
+    @staticmethod
+    def _add_hex(hex_value, amount):
         dec_result = int(hex_value, base=16) + amount
 
         if not 0 <= dec_result < 16:
@@ -46,14 +63,70 @@ class HexColor:
 
         return str(hex(dec_result))[2:]
 
-    def _amount_in_valid_range(self, amount):
+    @staticmethod
+    def _amount_in_valid_range(amount):
         return abs(amount) < 8
 
-    def _all_colors_can_be_switched(self, red, green, blue):
+    @staticmethod
+    def _all_colors_can_be_switched(red, green, blue):
         return all(
                 0 < int(val, base=16) < 15
                 for val in [red, green, blue]
         )
+
+    def _upper_highest(self, amount):
+        # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
+        highest_channel = max(self.__dict__, key=self.__dict__.get)
+        highest_channel_value = self.__dict__[highest_channel]
+        digit_to_update = self.__dict__[highest_channel][0]
+        try:
+            updated_digit = self._add_hex(digit_to_update, amount)
+        except DigitOutOfRange:
+            updated_digit = 'f'
+        self.__dict__[highest_channel] = f'{updated_digit}{highest_channel_value[1]}'
+        self.hex_name = self._get_hex_name()
+        return self.hex_name
+
+    def _double_highest(self):
+        highest_channel = max(self.__dict__, key=self.__dict__.get)
+        highest_channel_value = self.__dict__[highest_channel]
+        digit_to_update = self.__dict__[highest_channel][0]
+        try:
+            amount = int(digit_to_update, base=16)
+            updated_digit = self._add_hex(digit_to_update, amount)
+        except DigitOutOfRange:
+            updated_digit = 'f'
+        self.__dict__[highest_channel] = f'{updated_digit}{highest_channel_value[1]}'
+        self.hex_name = self._get_hex_name()
+        return self.hex_name
+
+    def _half_lowests(self):
+        lowest_channels = [ch for ch in self.__dict__ if (ch != max(self.__dict__, key=self.__dict__.get) and ch != 'hex_name')]
+        for channel in lowest_channels:
+            lowest_channel_value = self.__dict__[channel]
+            digit_to_update = self.__dict__[channel][0]
+            try:
+                amount = round(int(digit_to_update, base=16)/2)
+                updated_digit = self._add_hex(digit_to_update, -amount)
+            except DigitOutOfRange:
+                updated_digit = '0'
+            self.__dict__[channel] = f'{updated_digit}{lowest_channel_value[1]}'
+        self.hex_name = self._get_hex_name()
+        return self.hex_name
+
+    def _lower_lowests(self, amount):
+        # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
+        lowest_channels = [ch for ch in self.__dict__ if (ch != max(self.__dict__, key=self.__dict__.get) and ch != 'hex_name')]
+        for channel in lowest_channels:
+            lowest_channel_value = self.__dict__[channel]
+            digit_to_update = self.__dict__[channel][0]
+            try:
+                updated_digit = self._add_hex(digit_to_update, -amount)
+            except DigitOutOfRange:
+                updated_digit = '0'
+            self.__dict__[channel] = f'{updated_digit}{lowest_channel_value[1]}'
+        self.hex_name = self._get_hex_name()
+        return self.hex_name
 
     def _change_temperature(self, amount, subtle=False):
         """
@@ -81,7 +154,7 @@ class HexColor:
                 amount = amount + exception.overflow
                 new_r = self._add_hex(self.red[digit], amount)
                 new_b = self._add_hex(self.blue[digit], -amount)
-
+            # TODO: Refact calculations result so it edits the same color values (and hexname) to actually modify the color instead of returning a new one.
             return f'{self.red[0]}{new_r}{self.green}{self.blue[0]}{new_b}' if subtle else f'{new_r}{self.red[1]}{self.green}{new_b}{self.blue[1]}'
         else:
             raise ValueError('Amount must be less than 8 units.')
