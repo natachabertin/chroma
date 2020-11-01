@@ -31,6 +31,9 @@ class Palette:
     def __eq__(self, other):
         return self.colors == other.colors
 
+    def _get_main_color_channels(self):
+        return self.colors[0].channels['red'], self.colors[0].channels['green'], self.colors[0].channels['blue']
+
 
 class PaletteFromColor(Palette):
     """List of harmonic colors based on one color."""
@@ -47,9 +50,6 @@ class PaletteFromColor(Palette):
 
         self._onboard_colors(new_colors)
 
-    def _get_main_color_channels(self):
-        #TODO: move this to parent class and add the param main_color defaulting to 0, so you deal with self.colors[main] and can change it in multiple colors palettes
-        return self.colors[0].channels['red'], self.colors[0].channels['green'], self.colors[0].channels['blue']
 
 
 class DuetFromColor(Palette):
@@ -57,8 +57,15 @@ class DuetFromColor(Palette):
     def __init__(self, color):
         super().__init__(color)
 
-    def _get_main_color_channels(self):
-        return self.colors[0].red, self.colors[0].green, self.colors[0].blue
+    def choose_hue(self, hue):
+        """Given the hues matching the color, return the one tending to the chosen tint."""
+        channels = self._get_main_color_channels()
+        new_colors = list()
+        for permutation in permutations(channels):
+            color = ''.join(permutation)
+            new_colors.append(color)
+
+        self._onboard_colors(new_colors)
 
     def double_highest(self):
         """Doubling the highest channel."""
@@ -77,16 +84,6 @@ class DuetFromColor(Palette):
         for permutation in permutations(channels):
             color = ''.join(permutation)
             new_colors.append(color)
-
-    def choose_hue(self, hue):
-        """Given the hues matching the color, return the one tending to the choosen tint."""
-        channels = self._get_main_color_channels()
-        new_colors = list()
-        for permutation in permutations(channels):
-            color = ''.join(permutation)
-            new_colors.append(color)
-
-        self._onboard_colors(new_colors)
 
 
 class PaletteFromColorsList(Palette):
