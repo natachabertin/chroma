@@ -88,43 +88,43 @@ class HexColor:
         return self._get_hex_name()
 
     def _double_highest(self):
-        highest_channel = max(self.__dict__, key=self.__dict__.get)
-        highest_channel_value = self.__dict__[highest_channel]
-        digit_to_update = self.__dict__[highest_channel][0]
+        highest_channel = max(self.channels, key=self.channels.get)
+        highest_channel_value = self.channels[highest_channel]
+        digit_to_update = self.channels[highest_channel][0]
         try:
             amount = int(digit_to_update, base=16)
             updated_digit = self._add_hex(digit_to_update, amount)
         except DigitOutOfRange:
             updated_digit = 'f'
-        self.__dict__[highest_channel] = f'{updated_digit}{highest_channel_value[1]}'
+        self.channels[highest_channel] = f'{updated_digit}{highest_channel_value[1]}'
         self.hex_name = self._get_hex_name()
         return self.hex_name
 
     def _half_lowests(self):
-        lowest_channels = [ch for ch in self.__dict__ if (ch != max(self.__dict__, key=self.__dict__.get) and ch != 'hex_name')]
+        lowest_channels = [ch for ch in self.channels if ch != max(self.channels, key=self.channels.get)]
         for channel in lowest_channels:
-            lowest_channel_value = self.__dict__[channel]
-            digit_to_update = self.__dict__[channel][0]
+            lowest_channel_value = self.channels[channel]
+            digit_to_update = self.channels[channel][0]
             try:
                 amount = round(int(digit_to_update, base=16)/2)
                 updated_digit = self._add_hex(digit_to_update, -amount)
             except DigitOutOfRange:
                 updated_digit = '0'
-            self.__dict__[channel] = f'{updated_digit}{lowest_channel_value[1]}'
+            self.channels[channel] = f'{updated_digit}{lowest_channel_value[1]}'
         self.hex_name = self._get_hex_name()
         return self.hex_name
 
     def _lower_lowests(self, amount):
         # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
-        lowest_channels = [ch for ch in self.__dict__ if (ch != max(self.__dict__, key=self.__dict__.get) and ch != 'hex_name')]
+        lowest_channels = [ch for ch in self.channels if ch != max(self.channels, key=self.channels.get)]
         for channel in lowest_channels:
-            lowest_channel_value = self.__dict__[channel]
-            digit_to_update = self.__dict__[channel][0]
+            lowest_channel_value = self.channels[channel]
+            digit_to_update = self.channels[channel][0]
             try:
                 updated_digit = self._add_hex(digit_to_update, -amount)
             except DigitOutOfRange:
                 updated_digit = '0'
-            self.__dict__[channel] = f'{updated_digit}{lowest_channel_value[1]}'
+            self.channels[channel] = f'{updated_digit}{lowest_channel_value[1]}'
         self.hex_name = self._get_hex_name()
         return self.hex_name
 
