@@ -50,7 +50,7 @@ class TestPaletteFromColor(unittest.TestCase):
         self.assertEqual(self.palette.colors, expected)
 
 
-@unittest.skip("Not developed yet.")
+# @unittest.skip("Not developed yet.")
 class TestDuetFromColorChooseHue(unittest.TestCase):
     def setUp(self):
         self.color = '0af'
