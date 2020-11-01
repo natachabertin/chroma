@@ -393,4 +393,3 @@ class TestSaturators(unittest.TestCase):
         expected = HexColor('fa680b')
         color.subtractive_saturator()
         self.assertEqual(color, expected)
-

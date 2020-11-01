@@ -21,12 +21,12 @@ class Palette:
         return color_value if isinstance(color_value, HexColor) else HexColor(color_value)
 
     def __str__(self):
-        colors = [color.hex_name for color in self.colors]
+        colors = [str(color) for color in self.colors]
         return f"Palette: {' '.join(colors)}"
 
     def __repr__(self):
-        colors = [color.hex_name for color in self.colors]
-        return f"<Palette: {' '.join(colors)}>"
+        colors = [str(color) for color in self.colors]
+        return f"<Palette HexColors: {' '.join(colors)}>"
 
     def __eq__(self, other):
         return self.colors == other.colors
@@ -49,7 +49,7 @@ class PaletteFromColor(Palette):
 
     def _get_main_color_channels(self):
         #TODO: move this to parent class and add the param main_color defaulting to 0, so you deal with self.colors[main] and can change it in multiple colors palettes
-        return self.colors[0].red, self.colors[0].green, self.colors[0].blue
+        return self.colors[0].channels['red'], self.colors[0].channels['green'], self.colors[0].channels['blue']
 
 
 class DuetFromColor(Palette):

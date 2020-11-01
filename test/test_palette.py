@@ -35,7 +35,7 @@ class TestPalette(unittest.TestCase):
         color2 = HexColor('222')
         color3 = HexColor('333')
         res = repr(Palette(color1, color2, color3))
-        self.assertEqual(res, '<Palette: #111111 #222222 #333333>')
+        self.assertEqual(res, '<Palette HexColors: #111111 #222222 #333333>')
 
 
 class TestPaletteFromColor(unittest.TestCase):
@@ -49,6 +49,7 @@ class TestPaletteFromColor(unittest.TestCase):
         self.palette.retrieve_matching_hues()
         self.assertEqual(self.palette.colors, expected)
 
+
 @unittest.skip("Not developed yet.")
 class TestDuetFromColorChooseHue(unittest.TestCase):
     def setUp(self):
@@ -56,46 +57,46 @@ class TestDuetFromColorChooseHue(unittest.TestCase):
         self.palette = DuetFromColor(self.color)
 
     def test_choose_hue_red_greenish(self):
-        expectedAddition = 'fa0'
+        expected_addition = 'fa0'
         self.palette.choose_hue('rg')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
 
     def test_choose_hue_red_blueish(self):
-        expectedAddition = 'f0a'
+        expected_addition = 'f0a'
         self.palette.choose_hue('rb')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
 
     def test_choose_hue_green_reddish(self):
-        expectedAddition = 'af0'
+        expected_addition = 'af0'
         self.palette.choose_hue('gr')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
 
     def test_choose_hue_green_blueish(self):
-        expectedAddition = '0fa'
+        expected_addition = '0fa'
         self.palette.choose_hue('gb')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
 
     def test_choose_hue_blue_reddish(self):
-        expectedAddition = 'a0f'
+        expected_addition = 'a0f'
         self.palette.choose_hue('br')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
 
     def test_choose_hue_blue_greenish(self):
-        expectedAddition = '0af'
+        expected_addition = '0af'
         self.palette.choose_hue('bg')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
 
     def test_choose_hue_red_pair(self):
-        expectedAddition = ('fa0', 'f0a')
+        expected_addition = ('fa0', 'f0a')
         self.palette.choose_hue('r')
-        self.assertEqual(self.palette, Palette(self.color, *expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, *expected_addition))
 
     def test_choose_hue_green_pair(self):
-        expectedAddition = ('af0', '0fa')
+        expected_addition = ('af0', '0fa')
         self.palette.choose_hue('g')
-        self.assertEqual(self.palette, Palette(self.color, *expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, *expected_addition))
 
     def test_choose_hue_blue_pair(self):
-        expectedAddition = 'a0f'
+        expected_addition = 'a0f'
         self.palette.choose_hue('b')
-        self.assertEqual(self.palette, Palette(self.color, expectedAddition))
+        self.assertEqual(self.palette, Palette(self.color, expected_addition))
