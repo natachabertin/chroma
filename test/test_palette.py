@@ -35,7 +35,7 @@ class TestPalette(unittest.TestCase):
         color2 = HexColor('222')
         color3 = HexColor('333')
         res = repr(Palette(color1, color2, color3))
-        self.assertEqual(res, '<Palette: #111111 #222222 #333333>')
+        self.assertEqual(res, '<Palette HexColors: #111111 #222222 #333333>')
 
 
 class TestPaletteFromColor(unittest.TestCase):
