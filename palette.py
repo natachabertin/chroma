@@ -31,8 +31,8 @@ class Palette:
     def __eq__(self, other):
         return self.colors == other.colors
 
-    def _get_main_color_channels(self):
-        return self.colors[0].channels['red'], self.colors[0].channels['green'], self.colors[0].channels['blue']
+    def get_main_color(self):
+        return self.colors[0]
 
 
 class PaletteFromColor(Palette):
@@ -41,10 +41,10 @@ class PaletteFromColor(Palette):
         super().__init__(color)
 
     def retrieve_matching_hues(self):
-        """Generate a palette permutating triplets."""
-        channels = self._get_main_color_channels()
+        """Generate a palette permuting triplets."""
+        channel_values = self.get_main_color().channels.values()
         new_colors = list()
-        for permutation in permutations(channels):
+        for permutation in permutations(channel_values):
             color = ''.join(permutation)
             new_colors.append(color)
 

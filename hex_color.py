@@ -5,10 +5,10 @@ class HexColor:
     """ Given a hex value, generate a color and operate with its channels. """
     # TODO: refactor to operate over 2 digits at once with step=16 if not subtle else step=1.
     def __init__(self, hex_color):
-        self.channels = self._get_channels(hex_color)
+        self.channels = self.get_channels(hex_color)
 
     @staticmethod
-    def _get_channels(hex_color):
+    def get_channels(hex_color):
         precision = len(hex_color) // 3
         channels = [
             hex_color[precision * i:precision * (i + 1)]
@@ -76,7 +76,6 @@ class HexColor:
         )
 
     def _upper_highest(self, amount):
-        # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
         highest_channel = max(self.channels, key=self.channels.get)
         highest_channel_value = self.channels[highest_channel]
         digit_to_update = self.channels[highest_channel][0]
@@ -115,7 +114,6 @@ class HexColor:
         return self.hex_name
 
     def _lower_lowests(self, amount):
-        # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
         lowest_channels = [ch for ch in self.channels if ch != max(self.channels, key=self.channels.get)]
         for channel in lowest_channels:
             lowest_channel_value = self.channels[channel]
