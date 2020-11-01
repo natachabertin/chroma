@@ -51,7 +51,6 @@ class PaletteFromColor(Palette):
         self._onboard_colors(new_colors)
 
 
-
 class DuetFromColor(Palette):
     """Given a color, get a matching one and retrieve the duet palette."""
     def __init__(self, color):
