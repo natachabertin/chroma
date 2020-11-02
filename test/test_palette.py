@@ -50,11 +50,14 @@ class TestPaletteFromColor(unittest.TestCase):
         self.assertEqual(self.palette.colors, expected)
 
 
-# @unittest.skip("Not developed yet.")
 class TestDuetFromColorChooseHue(unittest.TestCase):
     def setUp(self):
         self.color = '0af'
         self.palette = DuetFromColor(self.color)
+
+    def test_choose_hue_if_selected_hue_is_starting_color_return_one_starting_color(self):
+        self.palette.choose_hue('bg')
+        self.assertEqual(self.palette, Palette(self.color))
 
     def test_choose_hue_red_greenish(self):
         expected_addition = 'fa0'

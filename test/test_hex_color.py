@@ -14,6 +14,10 @@ class TestHexColor(unittest.TestCase):
         result = HexColor('012')
         self.assertEqual(str(result), '#001122')
 
+    def test__get_channels_from_dict_rgb(self):
+        result = HexColor(dict(red='01', green='23', blue='45'))
+        self.assertEqual(str(result), '#012345')
+
     def test__get_hex_name_returns_leading_hash(self):
         result = HexColor('012345')
         self.assertEqual(str(result)[0], '#')
