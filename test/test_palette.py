@@ -1,7 +1,7 @@
 import unittest
 
 from hex_color import HexColor
-from palette import Palette, PaletteFromColor, DuetFromColor
+from palette import Palette, PaletteFromColor, DuetFromColor, TrioFromColor
 
 
 class TestPalette(unittest.TestCase):
@@ -88,6 +88,12 @@ class TestDuetFromColorChooseHue(unittest.TestCase):
         expected_addition = '0af'
         self.palette.choose_hue('bg')
         self.assertEqual(self.palette, Palette(self.color, expected_addition))
+
+
+class TestTrioFromColorChooseHue(unittest.TestCase):
+    def setUp(self):
+        self.color = '0af'
+        self.palette = TrioFromColor(self.color)
 
     def test_choose_hue_red_pair(self):
         expected_addition = ('fa0', 'f0a')
