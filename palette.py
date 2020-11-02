@@ -9,9 +9,10 @@ class Palette:
         self.colors = list()
         self._enter_colors(colors)
 
-    def append_new_color(self, other_color):
+    def append_new_colors(self, *other_colors):
         new_palette = self.colors[:]
-        new_palette.append(self._transform_to_color(other_color))
+        for color_value in other_colors:
+            new_palette.append(self._transform_to_color(color_value))
         self._enter_colors(new_palette)
 
     def _enter_colors(self, colors):
@@ -59,6 +60,32 @@ class PaletteFromColor(Palette):
         self._enter_colors(new_colors)
 
 
+class TrioFromColor(Palette):
+    """Given a color, get 2 matching ones and retrieve the trio palette."""
+    def __init__(self, color):
+        super().__init__(color)
+
+    def choose_hue(self, hue):
+        """Given the hues matching the color, return the one tending to the chosen tints."""
+        # TODO: Change channels dict keys from red to r and get rid of this dict.
+        CHANNEL_KEYS = dict(r='red', g='green', b='blue')
+
+        highest_channel = CHANNEL_KEYS.pop(hue[0])
+        middle_channel, lowest_channel = CHANNEL_KEYS.values()
+
+        new_color1 = {
+            highest_channel: self.get_main_color().get_highest_channel_value(),
+            middle_channel: self.get_main_color().get_middle_channel_value(),
+            lowest_channel: self.get_main_color().get_lowest_channel_value()
+        }
+        new_color2 = {
+            highest_channel: self.get_main_color().get_highest_channel_value(),
+            middle_channel: self.get_main_color().get_lowest_channel_value(),
+            lowest_channel: self.get_main_color().get_middle_channel_value()
+        }
+        self.append_new_colors(new_color1, new_color2)
+
+
 class DuetFromColor(Palette):
     """Given a color, get a matching one and retrieve the duet palette."""
     def __init__(self, color):
@@ -78,7 +105,7 @@ class DuetFromColor(Palette):
             middle_channel: self.get_main_color().get_middle_channel_value(),
             lowest_channel: self.get_main_color().get_lowest_channel_value()
         }
-        self.append_new_color(new_color)
+        self.append_new_colors(new_color)
 
     def double_highest(self):
         """Doubling the highest channel."""
