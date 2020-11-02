@@ -5,17 +5,19 @@ The idea came to me while reading [this article](https://www.smashingmagazine.co
 
 Now adding functionality to auto generate a tagged palette to be used in a design system.  
 
-### In development
+### Some functionalities
 
-#### DuetFromColor
-Given a origin color, return a duet palette adding a matching one.
+#### PaletteFromColor
+Given a origin color, return a palette adding matching ones.
 
 ##### Double highest & half lowers
-Return a duet with matching color
+Match a color those two ways.
 
+#### DuetFromColor and TrioFromColor
 ##### Choosing harmonic hue
 Receives a primary or secondary color, and returns the matching duet choosing from the matching hues the reddest | purplest | greenest | etc   
 
+### Coming soon...
 #### Design System functionality
 Dict with functional keys and colors as value.
 
@@ -23,5 +25,5 @@ Dict with functional keys and colors as value.
 * Dark Background, Dark Text, Dark Muted
 * Light Background, Light Text, Light Muted
 * Warning, Danger, Success
-* etc
+* etc.
 
