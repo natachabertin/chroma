@@ -5,10 +5,12 @@ class HexColor:
     """ Given a hex value, generate a color and operate with its channels. """
     # TODO: refactor to operate over 2 digits at once with step=16 if not subtle else step=1.
     def __init__(self, hex_color):
-        self.channels = self._get_channels(hex_color)
+        self.channels = self.get_channels(hex_color)
 
     @staticmethod
-    def _get_channels(hex_color):
+    def get_channels(hex_color):
+        if isinstance(hex_color, dict):
+            return hex_color
         precision = len(hex_color) // 3
         channels = [
             hex_color[precision * i:precision * (i + 1)]
@@ -29,6 +31,27 @@ class HexColor:
 
     def __eq__(self, other):
         return self._get_hex_name() == other._get_hex_name()
+
+    def get_highest_channel(self):
+        return max(self.channels, key=self.channels.get)
+
+    def get_highest_channel_value(self):
+        return self.channels[self.get_highest_channel()]
+
+    def get_middle_channel(self):
+        channels = list(self.channels)
+        channels.remove(self.get_highest_channel())
+        channels.remove(self.get_lowest_channel())
+        return channels[0]
+
+    def get_middle_channel_value(self):
+        return self.channels[self.get_middle_channel()]
+
+    def get_lowest_channel(self):
+        return min(self.channels, key=self.channels.get)
+
+    def get_lowest_channel_value(self):
+        return self.channels[self.get_lowest_channel()]
 
     def cooler(self, amount, subtle=False):
         return self._change_temperature(-amount, subtle=subtle)
@@ -76,7 +99,6 @@ class HexColor:
         )
 
     def _upper_highest(self, amount):
-        # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
         highest_channel = max(self.channels, key=self.channels.get)
         highest_channel_value = self.channels[highest_channel]
         digit_to_update = self.channels[highest_channel][0]
@@ -115,7 +137,6 @@ class HexColor:
         return self.hex_name
 
     def _lower_lowests(self, amount):
-        # Todo: refactor rgb attrs to dict color:value to avoid self.dict ugliness.
         lowest_channels = [ch for ch in self.channels if ch != max(self.channels, key=self.channels.get)]
         for channel in lowest_channels:
             lowest_channel_value = self.channels[channel]
@@ -136,7 +157,7 @@ class HexColor:
         -------
         amount : int
             Number of units to shift the digit. Mandatory.
-            Limit: if some channel arrives to the end, the other moves until the same amount to preserve harmony.
+            Limit: if some channel arrives to the end, the other_color moves until the same amount to preserve harmony.
         subtle : bool
             Shifts the ones digit if true. Otherwise shifts the sixteens. Optional; false default.
 
