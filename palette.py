@@ -21,7 +21,8 @@ class Palette:
             onboarding_color = self._transform_to_color(color_value)
             self.colors.append(onboarding_color) if onboarding_color not in self.colors else None
 
-    def _transform_to_color(self, color_value):
+    @staticmethod
+    def _transform_to_color(color_value):
         """Add color to the palette, whether are
         entered as hex colors or hex values."""
         return color_value if isinstance(color_value, HexColor) else HexColor(color_value)
