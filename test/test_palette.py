@@ -1,7 +1,7 @@
 import unittest
 
 from hex_color import HexColor
-from palette import Palette, PaletteFromColor, DuetFromColor, TrioFromColor
+from palette import Palette, PaletteFromColor, PaletteFromPalette, DuetFromColor, TrioFromColor
 
 
 class TestPalette(unittest.TestCase):
@@ -48,6 +48,24 @@ class TestPaletteFromColor(unittest.TestCase):
         expected = [HexColor(color) for color in colors]
         self.palette.retrieve_matching_hues()
         self.assertEqual(self.palette.colors, expected)
+
+
+class TestPaletteFromPalette(unittest.TestCase):
+    def setUp(self):
+        self.palette = PaletteFromPalette('6081e8','344283','251c1e','775a30')
+
+    def test_retrieve_another_palette(self):
+        result = self.palette.regenerate()
+        self.assertFalse([color in self.palette.colors for color in result.colors])
+
+    def test_retrieve_same_amount_of_colors_as_default(self):
+        result = self.palette.regenerate()
+        self.assertEqual(len(self.palette.colors), result)
+
+    def test_retrieve_amount_of_colors_asked(self):
+        number_of_colors = 2
+        result = self.palette.regenerate(number_of_colors)
+        self.assertEqual(len(self.palette.colors), len(number_of_colors))
 
 
 class TestDuetFromColorChooseHue(unittest.TestCase):
