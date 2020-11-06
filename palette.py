@@ -49,8 +49,9 @@ class Palette:
         Mix triplets from colors in the list,
         return a new palette with the mixed ones.
         """
-        return
-
+        input = ['6081e8', '344283', '251c1e', '775a30']
+        colors = [color for color in input[:number_of_colors]]
+        return Palette(colors)
 
 class PaletteFromColor(Palette):
     """List of harmonic colors based on one color."""
