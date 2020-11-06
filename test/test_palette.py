@@ -44,7 +44,7 @@ class TestPaletteRandomGenerate(unittest.TestCase):
 
     def test_retrieve_another_palette(self):
         result = self.palette.random_generate()
-        self.assertFalse(all([color in self.palette.colors for color in result.colors]))  # can repeat some but not all
+        self.assertNotEqual(self.palette, result)  # can repeat some but not all
 
     def test_retrieve_same_amount_of_colors_as_default(self):
         result = self.palette.random_generate()
