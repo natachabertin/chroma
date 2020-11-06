@@ -38,11 +38,18 @@ class Palette:
     def __eq__(self, other):
         return self.colors == other.colors
 
-    def get_main_color(self):
-        return self.colors[0]
+    def get_color(self, position=0):
+        return self.colors[position]
 
-    def get_main_color_channels(self):
-        return self.get_main_color().channels.values()
+    def get_color_channels(self, position=0):
+        return self.get_color(position).channels.values()
+
+    def random_generate(self, number_of_colors=None):
+        """
+        Mix triplets from colors in the list,
+        return a new palette with the mixed ones.
+        """
+        return
 
 
 class PaletteFromColor(Palette):
@@ -52,7 +59,7 @@ class PaletteFromColor(Palette):
 
     def retrieve_matching_hues(self):
         """Generate a palette permuting triplets."""
-        channel_values = self.get_main_color_channels()
+        channel_values = self.get_color_channels()
         new_colors = list()
         for permutation in permutations(channel_values):
             color = ''.join(permutation)
@@ -69,20 +76,20 @@ class TrioFromColor(Palette):
     def choose_hue(self, hue):
         """Given the hues matching the color, return the one tending to the chosen tints."""
         # TODO: Change channels dict keys from red to r and get rid of this dict.
-        CHANNEL_KEYS = dict(r='red', g='green', b='blue')
+        channel_keys = dict(r='red', g='green', b='blue')
 
-        highest_channel = CHANNEL_KEYS.pop(hue[0])
-        middle_channel, lowest_channel = CHANNEL_KEYS.values()
+        highest_channel = channel_keys.pop(hue[0])
+        middle_channel, lowest_channel = channel_keys.values()
 
         new_color1 = {
-            highest_channel: self.get_main_color().get_highest_channel_value(),
-            middle_channel: self.get_main_color().get_middle_channel_value(),
-            lowest_channel: self.get_main_color().get_lowest_channel_value()
+            highest_channel: self.get_color().get_highest_channel_value(),
+            middle_channel: self.get_color().get_middle_channel_value(),
+            lowest_channel: self.get_color().get_lowest_channel_value()
         }
         new_color2 = {
-            highest_channel: self.get_main_color().get_highest_channel_value(),
-            middle_channel: self.get_main_color().get_lowest_channel_value(),
-            lowest_channel: self.get_main_color().get_middle_channel_value()
+            highest_channel: self.get_color().get_highest_channel_value(),
+            middle_channel: self.get_color().get_lowest_channel_value(),
+            lowest_channel: self.get_color().get_middle_channel_value()
         }
         self.append_new_colors(new_color1, new_color2)
 
@@ -95,22 +102,22 @@ class DuetFromColor(Palette):
     def choose_hue(self, hue):
         """Given the hues matching the color, return the one tending to the chosen tints."""
         # TODO: Change channels dict keys from red to r and get rid of this dict.
-        CHANNEL_KEYS = dict(r='red', g='green', b='blue')
+        channel_keys = dict(r='red', g='green', b='blue')
 
-        highest_channel = CHANNEL_KEYS.pop(hue[0])
-        middle_channel = CHANNEL_KEYS.pop(hue[1])
-        lowest_channel = CHANNEL_KEYS[list(CHANNEL_KEYS.keys())[0]]
+        highest_channel = channel_keys.pop(hue[0])
+        middle_channel = channel_keys.pop(hue[1])
+        lowest_channel = channel_keys[list(channel_keys.keys())[0]]
 
         new_color = {
-            highest_channel: self.get_main_color().get_highest_channel_value(),
-            middle_channel: self.get_main_color().get_middle_channel_value(),
-            lowest_channel: self.get_main_color().get_lowest_channel_value()
+            highest_channel: self.get_color().get_highest_channel_value(),
+            middle_channel: self.get_color().get_middle_channel_value(),
+            lowest_channel: self.get_color().get_lowest_channel_value()
         }
         self.append_new_colors(new_color)
 
     def double_highest(self):
         """Doubling the highest channel."""
-        channels = self.get_main_color_channels()
+        channels = self.get_color_channels()
         new_colors = list()
         for permutation in permutations(channels):
             color = ''.join(permutation)
@@ -120,16 +127,8 @@ class DuetFromColor(Palette):
 
     def half_lowers(self):
         """Dividing the lower two channels by half."""
-        channels = self.get_main_color_channels()
+        channels = self.get_color_channels()
         new_colors = list()
         for permutation in permutations(channels):
             color = ''.join(permutation)
             new_colors.append(color)
-
-
-class PaletteFromColorsList(Palette):
-    """ Operations to generate palette after a list of colors. """
-
-    def harmonic_with_others(self, color_list):
-        # Mix triplets from colors in the list
-        pass
