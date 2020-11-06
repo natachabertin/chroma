@@ -1,7 +1,7 @@
 import unittest
 
 from hex_color import HexColor
-from palette import Palette, PaletteFromColor, PaletteFromPalette, DuetFromColor, TrioFromColor
+from palette import Palette, PaletteFromColor, DuetFromColor, TrioFromColor
 
 
 class TestPalette(unittest.TestCase):
@@ -38,6 +38,24 @@ class TestPalette(unittest.TestCase):
         self.assertEqual(res, '<Palette HexColors: #111111 #222222 #333333>')
 
 
+class TestPaletteRandomGenerate(unittest.TestCase):
+    def setUp(self):
+        self.palette = Palette('6081e8', '344283', '251c1e', '775a30')
+
+    def test_retrieve_another_palette(self):
+        result = self.palette.random_generate()
+        self.assertFalse(all([color in self.palette.colors for color in result.colors]))  # can repeat some but not all
+
+    def test_retrieve_same_amount_of_colors_as_default(self):
+        result = self.palette.random_generate()
+        self.assertEqual(len(result.colors), len(self.palette.colors))
+
+    def test_retrieve_amount_of_colors_asked(self):
+        number_of_colors = 2
+        result = self.palette.random_generate(number_of_colors)
+        self.assertEqual(len(result.colors), number_of_colors)
+
+
 class TestPaletteFromColor(unittest.TestCase):
     def setUp(self):
         self.color = HexColor('28c')
@@ -48,24 +66,6 @@ class TestPaletteFromColor(unittest.TestCase):
         expected = [HexColor(color) for color in colors]
         self.palette.retrieve_matching_hues()
         self.assertEqual(self.palette.colors, expected)
-
-
-class TestPaletteFromPalette(unittest.TestCase):
-    def setUp(self):
-        self.palette = PaletteFromPalette('6081e8','344283','251c1e','775a30')
-
-    def test_retrieve_another_palette(self):
-        result = self.palette.regenerate()
-        self.assertFalse([color in self.palette.colors for color in result.colors])
-
-    def test_retrieve_same_amount_of_colors_as_default(self):
-        result = self.palette.regenerate()
-        self.assertEqual(len(self.palette.colors), result)
-
-    def test_retrieve_amount_of_colors_asked(self):
-        number_of_colors = 2
-        result = self.palette.regenerate(number_of_colors)
-        self.assertEqual(len(self.palette.colors), len(number_of_colors))
 
 
 class TestDuetFromColorChooseHue(unittest.TestCase):
