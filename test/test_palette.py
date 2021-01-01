@@ -58,9 +58,9 @@ class TestPaletteMatchingPalette(unittest.TestCase):
         result = self.palette.retrieve_matching_palette()
         self.assertNotEqual(self.palette, result)  # can repeat some but not all
 
-    def test_retrieve_same_amount_of_colors_as_default(self):
+    def test_retrieve_all_permutations_as_default(self):
         result = self.palette.retrieve_matching_palette()
-        self.assertEqual(len(result.colors), len(self.palette.colors))
+        self.assertEqual(len(result.colors), len(self.palette.colors)**3)
 
     def test_retrieve_amount_of_colors_asked(self):
         number_of_colors = 2

@@ -63,9 +63,9 @@ class Palette:
         ]
 
         if number_of_colors:
-            new_colors[:'number_of_colors']
+            new_colors = new_colors[:number_of_colors]
 
-        return Palette(new_colors)
+        return Palette(*new_colors)
 
 
 class PaletteFromColor(Palette):
