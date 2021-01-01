@@ -38,21 +38,33 @@ class TestPalette(unittest.TestCase):
         self.assertEqual(res, '<Palette HexColors: #111111 #222222 #333333>')
 
 
-class TestPaletteRandomGenerate(unittest.TestCase):
+class TestPaletteMatchingPalette(unittest.TestCase):
     def setUp(self):
         self.palette = Palette('6081e8', '344283', '251c1e', '775a30')
 
+    def test_permutate_keeping_channel_order(self):
+        """Each channel is one from the same channels in the original.
+        E.g.: From Palette ['ACC', 'BCC'] red can be A or B only.
+        """
+        values_r = [color.channels['red'] for color in self.palette.colors]
+        values_g = [color.channels['green'] for color in self.palette.colors]
+        values_b = [color.channels['blue'] for color in self.palette.colors]
+        result = self.palette.retrieve_matching_palette()
+        self.assertTrue(result.colors[0].channels['red'] in values_r)
+        self.assertTrue(result.colors[0].channels['green'] in values_g)
+        self.assertTrue(result.colors[0].channels['blue'] in values_b)
+
     def test_retrieve_another_palette(self):
-        result = self.palette.random_generate()
+        result = self.palette.retrieve_matching_palette()
         self.assertNotEqual(self.palette, result)  # can repeat some but not all
 
     def test_retrieve_same_amount_of_colors_as_default(self):
-        result = self.palette.random_generate()
+        result = self.palette.retrieve_matching_palette()
         self.assertEqual(len(result.colors), len(self.palette.colors))
 
     def test_retrieve_amount_of_colors_asked(self):
         number_of_colors = 2
-        result = self.palette.random_generate(number_of_colors)
+        result = self.palette.retrieve_matching_palette(number_of_colors)
         self.assertEqual(len(result.colors), number_of_colors)
 
 

@@ -1,4 +1,4 @@
-from itertools import permutations
+from itertools import permutations, product
 
 from hex_color import HexColor
 
@@ -44,14 +44,29 @@ class Palette:
     def get_color_channels(self, position=0):
         return self.get_color(position).channels.values()
 
-    def random_generate(self, number_of_colors=None):
+    def retrieve_matching_palette(self, number_of_colors=None):
         """
         Mix triplets from colors in the list,
         return a new palette with the mixed ones.
         """
-        input = ['6081e8', '344283', '251c1e', '775a30']
-        colors = [color for color in input[:number_of_colors]]
-        return Palette(colors)
+        channel_options = [
+            [color.channels['red'] for color in self.colors],
+            [color.channels['green'] for color in self.colors],
+            [color.channels['blue'] for color in self.colors]
+        ]
+
+        new_palette_colors_channels = list(product(*channel_options))
+
+        new_colors = [
+            ''.join(color)
+            for color in new_palette_colors_channels
+        ]
+
+        if number_of_colors:
+            new_colors[:'number_of_colors']
+
+        return Palette(new_colors)
+
 
 class PaletteFromColor(Palette):
     """List of harmonic colors based on one color."""
