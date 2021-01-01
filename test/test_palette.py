@@ -43,7 +43,8 @@ class TestPaletteMatchingPalette(unittest.TestCase):
         self.palette = Palette('6081e8', '344283', '251c1e', '775a30')
 
     def test_permutate_keeping_channel_order(self):
-        """Each channel is one from the same channels in the original.
+        """
+        Each channel is one from the same channel that in the original.
         E.g.: From Palette ['ACC', 'BCC'] red can be A or B only.
         """
         values_r = [color.channels['red'] for color in self.palette.colors]

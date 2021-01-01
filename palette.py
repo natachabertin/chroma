@@ -1,4 +1,5 @@
 from itertools import permutations, product
+import random
 
 from hex_color import HexColor
 
@@ -61,6 +62,7 @@ class Palette:
             ''.join(color)
             for color in new_palette_colors_channels
         ]
+        random.shuffle(new_colors)
 
         if number_of_colors:
             new_colors = new_colors[:number_of_colors]
