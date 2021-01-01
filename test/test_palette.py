@@ -56,8 +56,9 @@ class TestPaletteMatchingPalette(unittest.TestCase):
         self.assertTrue(result.colors[0].channels['blue'] in values_b)
 
     def test_retrieve_another_palette(self):
+        """Can repeat some but not all."""
         result = self.palette.retrieve_matching_palette()
-        self.assertNotEqual(self.palette, result)  # can repeat some but not all
+        self.assertNotEqual(self.palette, result)
 
     def test_retrieve_all_permutations_as_default(self):
         result = self.palette.retrieve_matching_palette()
