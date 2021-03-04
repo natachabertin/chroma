@@ -3,18 +3,15 @@
 ### A palette generator algorithm coded just for fun.
 The idea came to me while reading [this article](https://www.smashingmagazine.com/2012/10/the-code-side-of-color/ "«Hex Color – The Code Side Of Color», in Smashing Magazine") about color harmony and their hexadecimal values written by [Ben Gremillion](https://twitter.com/benthinkin "@benthinkin").
 
-## How to review the code?
-In order to guide yourself through the code, **use the next guide or the tests** and _not the main.py file_.
-The project is in development, so maybe the forgotten main is a little (?) untidy.
+Now we have a working main...only in the happy path.
 
-#### Not the main. Most of the file is deprecated.
-It started as a render to test the prototype of the algorithm (you can see the repeated functions that I need to clean some day), **now is just a render in order to manually generate the colors (front end is next, when I step into React!)**.
+Unlike the rest of the modules, the main and the web opener weren't tested nor their input's validated.
+Keep in mind that we're going to open your browser on [this EXTERNAL web](http://colorcombos.com) to show the colors.
 
-### So, where to start?
-You can **import the modules** or **use the tests** to analyze it (this was done with TDD, so all the paths should be covered!).
 
 To fully understand the algorithm, you can open **[this article](https://www.smashingmagazine.com/2012/10/the-code-side-of-color/ "«Hex Color – The Code Side Of Color», in Smashing Magazine")** on which the project is based.
 
+All the color mixes described the were covered in this repo.
 
 * **Start with HexColor** class (in hex_color.py)
 * Once you know how the colors work, **continue with Palettes** (palette.py)
